@@ -1,18 +1,17 @@
 ﻿using SmartDoku.Main.Model;
 using SmartDoku.Main.IService;
-using System.Collections.Generic;
-using System.Linq;
 using SmartDoku.Main.Service;
+using System;
 
 namespace SmartDoku.Main.Controller
 {
   public class SDUtils
   {
-    public void AlteraValorCelula(SDMatrizModel matriz, int linha, int coluna, int? valor)
+    public void AlteraValorCelula(SDMatrizModel matriz, SDCelulaModel celulaAlterada, SDCelulaModel oldCelula)
     {
       using (ISDService sdService = new SDService())
       {
-        sdService.AlteraValorCelula(matriz, linha, coluna, valor);
+        sdService.AlteraValorCelula(matriz, celulaAlterada, oldCelula);
       }
     }
 
@@ -29,6 +28,22 @@ namespace SmartDoku.Main.Controller
       using (ISDService sdService = new SDService())
       {
         sdService.GeraDigitosIniciais(matriz, qtdeDigitosIniciais);
+      }
+    }
+
+    public static int? ConvertStringToInt32Nullable(object objeto)
+    {
+      string value = Convert.ToString(objeto);
+
+      if (string.IsNullOrEmpty(value))
+      {
+        return null;
+      }
+      else
+      {
+        int? result = Convert.ToInt32(value);
+
+        return result;
       }
     }
   }

@@ -13,13 +13,27 @@ namespace SmartDoku.Main.Service
       //this.Dispose();
     }
 
-    public void AlteraValorCelula(SDMatrizModel matriz, int linha, int coluna, int? valor)
+    public void AlteraValorCelula(SDMatrizModel matriz, SDCelulaModel celulaAlterada, SDCelulaModel oldCelula)
     {
-      var cel = matriz.Celulas.Find(celula => celula.PosicaoLinha == linha
-                               && celula.PosicaoColuna == coluna);
-      cel.Valor = valor;
+      AjustaStatusCelula(matriz, celulaAlterada);
+      ReavaliaCelulasAposAlteracao(matriz, oldCelula);
+    }
 
-      AjustaStatusCelula(matriz, cel);
+    public void ReavaliaCelulasAposAlteracao(SDMatrizModel matriz, SDCelulaModel oldCelula)
+    {
+      var listaCelulasParaReavaliar = new List<SDCelulaModel>();
+
+      listaCelulasParaReavaliar.AddRange(matriz.Linhas.Find(linha => linha.NumeroSequencial == oldCelula.PosicaoLinha)
+                                                      .Celulas.Where(celula => celula.Valor == oldCelula.Valor).ToList());
+      listaCelulasParaReavaliar.AddRange(matriz.Colunas.Find(coluna => coluna.NumeroSequencial == oldCelula.PosicaoColuna)
+                                                      .Celulas.Where(celula => celula.Valor == oldCelula.Valor).ToList());
+      listaCelulasParaReavaliar.AddRange(matriz.Quadrantes.Find(quadrante => quadrante.Celulas.Contains(oldCelula))
+                                                      .Celulas.Where(celula => celula.Valor == oldCelula.Valor).ToList());
+
+      foreach (var celulaParaReavaliar in listaCelulasParaReavaliar)
+      {
+        AjustaStatusCelula(matriz, celulaParaReavaliar);
+      }
     }
 
     public void AjustaStatusCelula(SDMatrizModel matriz, SDCelulaModel celulaAlterada)

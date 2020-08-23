@@ -11,6 +11,7 @@ namespace SmartDoku
     public MainForm()
     {
       InitializeComponent();
+      tbDigitsIniciais.Text = "0";
     }
 
     public SDUtils sdUtils {
@@ -29,25 +30,19 @@ namespace SmartDoku
       SDMatrizModel matriz = new SDMatrizModel();
       this.sdMatrixGrid.Matriz = matriz;
 
-      sdUtils.GeraDigitosIniciais(matriz, 5);
+      sdUtils.GeraDigitosIniciais(matriz, Convert.ToInt32(this.tbDigitsIniciais.Text));
       this.sdMatrixGrid.AmarraMatrizAoGrid();
     }
 
     private void sdMatrixGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
     {
-      int? valor = null;
+      var celulaAlterada = this.sdMatrixGrid.Matriz.Celulas.Find(celula => celula.PosicaoLinha == e.RowIndex + 1
+                                                                        && celula.PosicaoColuna == e.ColumnIndex + 1);
 
-      try
-      {
-        valor = Convert.ToInt32(this.sdMatrixGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value);
-      }
-      catch { }
-      finally
-      {
-        sdUtils.AlteraValorCelula(this.sdMatrixGrid.Matriz, e.RowIndex + 1, e.ColumnIndex + 1, valor);
-        this.sdMatrixGrid.ColoreCelulas();
-      }
+      celulaAlterada.Valor = SDUtils.ConvertStringToInt32Nullable(this.sdMatrixGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value);
 
+      sdUtils.AlteraValorCelula(this.sdMatrixGrid.Matriz, celulaAlterada, _oldCelula);
+      this.sdMatrixGrid.ColoreCelulas();
     }
 
     private void sdMatrixGrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -67,6 +62,14 @@ namespace SmartDoku
           e.Handled = true;
         }
       }
+    }
+
+    private SDCelulaModel _oldCelula;
+    private void sdMatrixGrid_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+    {
+      var celulaEmEdicao = this.sdMatrixGrid.Matriz.Celulas.Find(celula => celula.PosicaoLinha == e.RowIndex + 1
+                                                                        && celula.PosicaoColuna == e.ColumnIndex + 1);
+      _oldCelula = new SDCelulaModel(celulaEmEdicao);
     }
   }
 }

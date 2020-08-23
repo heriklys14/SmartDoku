@@ -2,7 +2,8 @@ Tarefas:
 
 criar quadrantes - ok
 	validar céluas dentro do quadrante - ok
-Limpar cor das células válidas, após a alteração de um valor inválido
-Colorir borda da célula, quando selecionada
+Limpar cor das células válidas, após a alteração de um valor inválido - ok
 Exportar projeto para github - ok
-criar campo para escolher número de digitos iniciais
+criar campo para escolher número de digitos iniciais - ok
+bloquear reajuste da grid quando edita última linha
+Colorir borda da célula, quando selecionada

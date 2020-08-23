@@ -1,6 +1,4 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SmartDoku.Main.Model
 {
@@ -8,10 +6,16 @@ namespace SmartDoku.Main.Model
   {
     public SDCelulaModel()
     {
-      ModifiedRegisters = new List<object>();
+
     }
 
-    public List<object> ModifiedRegisters { get; set; }
+    public SDCelulaModel(SDCelulaModel celula)
+    {
+      this.PosicaoLinha = celula.PosicaoLinha;
+      this.PosicaoColuna = celula.PosicaoColuna;
+      this.Valor = celula.Valor;
+      this.isCelulaValida = celula.isCelulaValida;
+    }
 
     public int PosicaoLinha { get; set; }
 
