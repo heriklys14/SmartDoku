@@ -1,7 +1,8 @@
 Tarefas:
 
 criar quadrantes - ok
-	validar céluas dentro do quadrante
+	validar céluas dentro do quadrante - ok
 Limpar cor das células válidas, após a alteração de um valor inválido
 Colorir borda da célula, quando selecionada
 Exportar projeto para github - ok
+criar campo para escolher número de digitos iniciais

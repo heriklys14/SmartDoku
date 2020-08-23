@@ -14,6 +14,7 @@ namespace SmartDoku.Main.Model
     }
 
     public int NumeroSequencial { get; set; }
+
     public List<SDCelulaModel> Celulas { get; set; }
   }
 }

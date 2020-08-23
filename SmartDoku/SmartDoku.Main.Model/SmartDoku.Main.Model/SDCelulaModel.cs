@@ -14,7 +14,9 @@ namespace SmartDoku.Main.Model
     public List<object> ModifiedRegisters { get; set; }
 
     public int PosicaoLinha { get; set; }
+
     public int PosicaoColuna { get; set; }
+
     public int? Valor
     {
       get { return _valor; }

@@ -61,6 +61,13 @@ namespace SmartDoku.Main.Service
                                               && celula.Valor == celulaAlterada.Valor
                                               && (celula.Valor > 0 && celula.Valor != null)).ToList());
 
+      listaCelulasInvalidas.AddRange(matriz.Quadrantes.
+        Find(quadrante => quadrante.Celulas.Contains(celulaAlterada)).
+          Celulas.Where(celula => celula.PosicaoLinha != celulaAlterada.PosicaoLinha
+                               && celula.PosicaoColuna != celulaAlterada.PosicaoColuna
+                               && celula.Valor == celulaAlterada.Valor
+                               && (celula.Valor >0 && celula.Valor != null)).ToList());
+
       return listaCelulasInvalidas;
     }
 
@@ -70,33 +77,36 @@ namespace SmartDoku.Main.Service
 
       int digGerados = 0;
 
-      do
+      if (qtdeDigitosIniciais > 0)
       {
-        var achou = false;
-        SDCelulaModel cel = new SDCelulaModel();
-
-        while (!achou)
-        {
-          var posLinha = new Random().Next(1, 10);
-          var posCol = new Random().Next(1, 10);
-
-          achou = matriz.Celulas.Exists(celula => celula.PosicaoLinha == posLinha
-                                               && celula.PosicaoColuna == posCol
-                                               && (celula.Valor == null || celula.Valor == 0));
-          if (achou)
-            cel = matriz.Celulas.Find(celula => celula.PosicaoLinha == posLinha
-                                             && celula.PosicaoColuna == posCol);
-        }
-
         do
         {
-          cel.Valor = new Random().Next(1, 10);
+          var achou = false;
+          SDCelulaModel cel = new SDCelulaModel();
 
-        } while (RetornaListaCelulasInvalidas(matriz, cel).Any()) ;
+          while (!achou)
+          {
+            var posLinha = new Random().Next(1, 10);
+            var posCol = new Random().Next(1, 10);
 
-        digGerados++;
+            achou = matriz.Celulas.Exists(celula => celula.PosicaoLinha == posLinha
+                                                 && celula.PosicaoColuna == posCol
+                                                 && (celula.Valor == null || celula.Valor == 0));
+            if (achou)
+              cel = matriz.Celulas.Find(celula => celula.PosicaoLinha == posLinha
+                                               && celula.PosicaoColuna == posCol);
+          }
 
-      } while (digGerados < qtdeDigitosIniciais);
+          do
+          {
+            cel.Valor = new Random().Next(1, 10);
+
+          } while (RetornaListaCelulasInvalidas(matriz, cel).Any());
+
+          digGerados++;
+
+        } while (digGerados < qtdeDigitosIniciais);
+      }
     }
 
 
