@@ -1,0 +1,5 @@
+Tarefas:
+
+Limpar cor das células válidas, após a alteração de um valor inválido
+Colorir borda da célula, quando selecionada
+Exportar projeto para github
