@@ -91,6 +91,7 @@ namespace SmartDoku.Main.Service
         do
         {
           cel.Valor = new Random().Next(1, 10);
+
         } while (RetornaListaCelulasInvalidas(matriz, cel).Any()) ;
 
         digGerados++;

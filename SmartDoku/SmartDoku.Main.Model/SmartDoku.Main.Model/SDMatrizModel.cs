@@ -25,6 +25,7 @@ namespace SmartDoku.Main.Model
       CriaLinhasMatriz();
       PreencheCelulas();
       CriaColunasMatriz();
+      CriaQuadrantesMatriz();
     }
 
     #region Props
@@ -97,7 +98,16 @@ namespace SmartDoku.Main.Model
 
     private void CriaQuadrantesMatriz()
     {
+      for (int i = 1; i <= 9; i++)
+      {
+        var quadrante = new SDQuadranteModel() {NumeroSequencial = i };
 
+        quadrante.Celulas.AddRange(
+          this.Celulas.Where(cel => quadrante.Area.ToList().Contains($"{cel.PosicaoLinha}|{cel.PosicaoColuna}"))
+                      .ToList());
+
+        Quadrantes.Add(quadrante);
+      }
     }
 
 
