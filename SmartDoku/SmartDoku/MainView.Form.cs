@@ -31,10 +31,5 @@ namespace SmartDoku
       sdUtils.GeraDigitosIniciais(matriz, Convert.ToInt32(this.tbDigitsIniciais.Text));
       this.sdMatrixGrid.AmarraMatrizAoGrid();
     }
-
-    private void sdMatrixGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-    {
-
-    }
   }
 }
