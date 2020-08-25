@@ -7,3 +7,6 @@ Exportar projeto para github - ok
 criar campo para escolher número de digitos iniciais - ok
 bloquear reajuste da grid quando edita última linha
 Colorir borda da célula, quando selecionada
+criar tratativa para permitir inserção apenas dos digitos 1-9 - ok
+migrar eventos para o componente customizado - ok
+alterar range de valores durante geração da matriz, para que os mesmo considerem os valores ja inclusos (linha, coluna e quadrante)

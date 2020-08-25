@@ -1,4 +1,6 @@
-﻿namespace SmartDoku
+﻿using System.Windows.Forms;
+
+namespace SmartDoku
 {
   partial class MainForm
   {
@@ -46,6 +48,23 @@
       this.btnGeraMatriz.UseVisualStyleBackColor = true;
       this.btnGeraMatriz.Click += new System.EventHandler(this.btnGeraMatriz_Click);
       // 
+      // tbDigitsIniciais
+      // 
+      this.tbDigitsIniciais.Location = new System.Drawing.Point(178, 115);
+      this.tbDigitsIniciais.Name = "tbDigitsIniciais";
+      this.tbDigitsIniciais.Size = new System.Drawing.Size(32, 20);
+      this.tbDigitsIniciais.TabIndex = 3;
+      this.tbDigitsIniciais.Text = "5";
+      // 
+      // lbDigitsIniciais
+      // 
+      this.lbDigitsIniciais.AutoSize = true;
+      this.lbDigitsIniciais.Location = new System.Drawing.Point(25, 118);
+      this.lbDigitsIniciais.Name = "lbDigitsIniciais";
+      this.lbDigitsIniciais.Size = new System.Drawing.Size(147, 13);
+      this.lbDigitsIniciais.TabIndex = 4;
+      this.lbDigitsIniciais.Text = "Quantidade de Digitos Iniciais";
+      // 
       // sdMatrixGrid
       // 
       this.sdMatrixGrid.AllowUserToAddRows = false;
@@ -62,33 +81,16 @@
       dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Red;
       dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
       this.sdMatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
-      this.sdMatrixGrid.Location = new System.Drawing.Point(263, 30);
+      this.sdMatrixGrid.Location = new System.Drawing.Point(263, 49);
       this.sdMatrixGrid.Matriz = null;
       this.sdMatrixGrid.MultiSelect = false;
       this.sdMatrixGrid.Name = "sdMatrixGrid";
+      this.sdMatrixGrid.OldCelula = null;
       this.sdMatrixGrid.RowHeadersVisible = false;
       this.sdMatrixGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
       this.sdMatrixGrid.ScrollBars = System.Windows.Forms.ScrollBars.None;
       this.sdMatrixGrid.Size = new System.Drawing.Size(360, 360);
       this.sdMatrixGrid.TabIndex = 1;
-      this.sdMatrixGrid.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.sdMatrixGrid_CellBeginEdit);
-      this.sdMatrixGrid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.sdMatrixGrid_CellValueChanged);
-      // 
-      // tbDigitsIniciais
-      // 
-      this.tbDigitsIniciais.Location = new System.Drawing.Point(178, 115);
-      this.tbDigitsIniciais.Name = "tbDigitsIniciais";
-      this.tbDigitsIniciais.Size = new System.Drawing.Size(32, 20);
-      this.tbDigitsIniciais.TabIndex = 3;
-      // 
-      // lbDigitsIniciais
-      // 
-      this.lbDigitsIniciais.AutoSize = true;
-      this.lbDigitsIniciais.Location = new System.Drawing.Point(25, 118);
-      this.lbDigitsIniciais.Name = "lbDigitsIniciais";
-      this.lbDigitsIniciais.Size = new System.Drawing.Size(147, 13);
-      this.lbDigitsIniciais.TabIndex = 4;
-      this.lbDigitsIniciais.Text = "Quantidade de Digitos Iniciais";
       // 
       // MainForm
       // 
@@ -111,9 +113,9 @@
     #endregion
 
     private Components.SDMatrixGrid sdMatrixGrid;
-    private System.Windows.Forms.Button btnGeraMatriz;
-    private System.Windows.Forms.TextBox tbDigitsIniciais;
-    private System.Windows.Forms.Label lbDigitsIniciais;
+    private Button btnGeraMatriz;
+    private TextBox tbDigitsIniciais;
+    private Label lbDigitsIniciais;
   }
 }
 
