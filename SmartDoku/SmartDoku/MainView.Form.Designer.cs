@@ -35,35 +35,19 @@ namespace SmartDoku
       this.sdMatrixGrid = new SmartDoku.Components.SDMatrixGrid();
       this.tbDigitsIniciais = new System.Windows.Forms.TextBox();
       this.lbDigitsIniciais = new System.Windows.Forms.Label();
+      this.btnResetaMatriz = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.sdMatrixGrid)).BeginInit();
       this.SuspendLayout();
       // 
       // btnGeraMatriz
       // 
-      this.btnGeraMatriz.Location = new System.Drawing.Point(25, 30);
+      this.btnGeraMatriz.Location = new System.Drawing.Point(28, 49);
       this.btnGeraMatriz.Name = "btnGeraMatriz";
       this.btnGeraMatriz.Size = new System.Drawing.Size(75, 23);
       this.btnGeraMatriz.TabIndex = 2;
       this.btnGeraMatriz.Text = "Gerar Matriz";
       this.btnGeraMatriz.UseVisualStyleBackColor = true;
       this.btnGeraMatriz.Click += new System.EventHandler(this.btnGeraMatriz_Click);
-      // 
-      // tbDigitsIniciais
-      // 
-      this.tbDigitsIniciais.Location = new System.Drawing.Point(178, 115);
-      this.tbDigitsIniciais.Name = "tbDigitsIniciais";
-      this.tbDigitsIniciais.Size = new System.Drawing.Size(32, 20);
-      this.tbDigitsIniciais.TabIndex = 3;
-      this.tbDigitsIniciais.Text = "5";
-      // 
-      // lbDigitsIniciais
-      // 
-      this.lbDigitsIniciais.AutoSize = true;
-      this.lbDigitsIniciais.Location = new System.Drawing.Point(25, 118);
-      this.lbDigitsIniciais.Name = "lbDigitsIniciais";
-      this.lbDigitsIniciais.Size = new System.Drawing.Size(147, 13);
-      this.lbDigitsIniciais.TabIndex = 4;
-      this.lbDigitsIniciais.Text = "Quantidade de Digitos Iniciais";
       // 
       // sdMatrixGrid
       // 
@@ -92,11 +76,39 @@ namespace SmartDoku
       this.sdMatrixGrid.Size = new System.Drawing.Size(360, 360);
       this.sdMatrixGrid.TabIndex = 1;
       // 
+      // tbDigitsIniciais
+      // 
+      this.tbDigitsIniciais.Location = new System.Drawing.Point(178, 115);
+      this.tbDigitsIniciais.Name = "tbDigitsIniciais";
+      this.tbDigitsIniciais.Size = new System.Drawing.Size(32, 20);
+      this.tbDigitsIniciais.TabIndex = 3;
+      this.tbDigitsIniciais.Text = "5";
+      // 
+      // lbDigitsIniciais
+      // 
+      this.lbDigitsIniciais.AutoSize = true;
+      this.lbDigitsIniciais.Location = new System.Drawing.Point(25, 118);
+      this.lbDigitsIniciais.Name = "lbDigitsIniciais";
+      this.lbDigitsIniciais.Size = new System.Drawing.Size(147, 13);
+      this.lbDigitsIniciais.TabIndex = 4;
+      this.lbDigitsIniciais.Text = "Quantidade de Digitos Iniciais";
+      // 
+      // btnResetaMatriz
+      // 
+      this.btnResetaMatriz.Location = new System.Drawing.Point(126, 49);
+      this.btnResetaMatriz.Name = "btnResetaMatriz";
+      this.btnResetaMatriz.Size = new System.Drawing.Size(84, 23);
+      this.btnResetaMatriz.TabIndex = 5;
+      this.btnResetaMatriz.Text = "Resetar Matriz";
+      this.btnResetaMatriz.UseVisualStyleBackColor = true;
+      this.btnResetaMatriz.Click += new System.EventHandler(this.btnResetaMatriz_Click);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(931, 490);
+      this.Controls.Add(this.btnResetaMatriz);
       this.Controls.Add(this.lbDigitsIniciais);
       this.Controls.Add(this.tbDigitsIniciais);
       this.Controls.Add(this.btnGeraMatriz);
@@ -104,6 +116,7 @@ namespace SmartDoku
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "SmartDoku";
+      this.Load += new System.EventHandler(this.MainForm_Load);
       ((System.ComponentModel.ISupportInitialize)(this.sdMatrixGrid)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -116,6 +129,7 @@ namespace SmartDoku
     private Button btnGeraMatriz;
     private TextBox tbDigitsIniciais;
     private Label lbDigitsIniciais;
+    private Button btnResetaMatriz;
   }
 }
 

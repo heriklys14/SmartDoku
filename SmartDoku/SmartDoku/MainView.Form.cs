@@ -25,11 +25,20 @@ namespace SmartDoku
 
     private void btnGeraMatriz_Click(object sender, EventArgs e)
     {
+      sdUtils.GeraDigitosIniciais(this.sdMatrixGrid.Matriz, Convert.ToInt32(this.tbDigitsIniciais.Text));
+      this.sdMatrixGrid.AmarraMatrizAoGrid();
+    }
+
+    private void btnResetaMatriz_Click(object sender, EventArgs e)
+    {
+      sdUtils.GeraDigitosIniciais(this.sdMatrixGrid.Matriz, 0);
+      this.sdMatrixGrid.AmarraMatrizAoGrid();
+    }
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
       SDMatrizModel matriz = new SDMatrizModel();
       this.sdMatrixGrid.Matriz = matriz;
-
-      sdUtils.GeraDigitosIniciais(matriz, Convert.ToInt32(this.tbDigitsIniciais.Text));
-      this.sdMatrixGrid.AmarraMatrizAoGrid();
     }
   }
 }
