@@ -89,7 +89,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmarDoku.Main.Controller\SmartDoku.Main.Controller.csproj">
+    <ProjectReference Include="..\SmartDoku.Main.Controller\SmartDoku.Main.Controller.csproj">
       <Project>{5669204a-3264-4225-8110-8054d05125c3}</Project>
       <Name>SmartDoku.Main.Controller</Name>
     </ProjectReference>
