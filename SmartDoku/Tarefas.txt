@@ -10,3 +10,4 @@ Colorir borda da célula, quando selecionada
 criar tratativa para permitir inserção apenas dos digitos 1-9 - ok
 migrar eventos para o componente customizado - ok
 alterar range de valores durante geração da matriz, para que os mesmo considerem os valores ja inclusos (linha, coluna e quadrante)
+migrar tarefas para issues do github - ok

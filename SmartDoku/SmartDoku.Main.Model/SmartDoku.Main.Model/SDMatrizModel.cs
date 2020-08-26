@@ -8,15 +8,13 @@ namespace SmartDoku.Main.Model
 {
   public class SDMatrizModel
   {
-    public SDMatrizModel(int qtdeDigitosIniciais = 5)
+    public SDMatrizModel()
     {
       Linhas = new List<SDLinhaModel>();
       Colunas = new List<SDColunaModel>();
       Celulas = new List<SDCelulaModel>();
       Quadrantes = new List<SDQuadranteModel>();
-
-      QtdeDigitosIniciais = qtdeDigitosIniciais;
-
+      
       IniciaMatriz();
     }
 
@@ -37,8 +35,6 @@ namespace SmartDoku.Main.Model
     public List<SDQuadranteModel> Quadrantes { get; set; }
 
     public List<SDCelulaModel> Celulas { get; set; }
-
-    public int QtdeDigitosIniciais { get; set; }
 
     #endregion
 

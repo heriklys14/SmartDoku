@@ -3,6 +3,7 @@ using SmartDoku.Main.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace SmartDoku.Main.Service
 {
@@ -64,16 +65,16 @@ namespace SmartDoku.Main.Service
       List<SDCelulaModel> listaCelulasInvalidas = new List<SDCelulaModel>();
 
       listaCelulasInvalidas.AddRange(matriz.Linhas.
-          Find(linha => linha.NumeroSequencial == celulaAlterada.PosicaoLinha).
-            Celulas.Where(celula => celula.PosicaoColuna != celulaAlterada.PosicaoColuna
-                                          && celula.Valor == celulaAlterada.Valor
-                                          && (celula.Valor > 0 && celula.Valor != null)).ToList());
+        Find(linha => linha.NumeroSequencial == celulaAlterada.PosicaoLinha).
+          Celulas.Where(celula => celula.PosicaoColuna != celulaAlterada.PosicaoColuna
+                               && celula.Valor == celulaAlterada.Valor
+                               && (celula.Valor > 0 && celula.Valor != null)).ToList());
 
       listaCelulasInvalidas.AddRange(matriz.Colunas.
-              Find(coluna => coluna.NumeroSequencial == celulaAlterada.PosicaoColuna).
-                Celulas.Where(celula => celula.PosicaoLinha != celulaAlterada.PosicaoLinha
-                                              && celula.Valor == celulaAlterada.Valor
-                                              && (celula.Valor > 0 && celula.Valor != null)).ToList());
+        Find(coluna => coluna.NumeroSequencial == celulaAlterada.PosicaoColuna).
+          Celulas.Where(celula => celula.PosicaoLinha != celulaAlterada.PosicaoLinha
+                               && celula.Valor == celulaAlterada.Valor
+                               && (celula.Valor > 0 && celula.Valor != null)).ToList());
 
       listaCelulasInvalidas.AddRange(matriz.Quadrantes.
         Find(quadrante => quadrante.Celulas.Contains(celulaAlterada)).
@@ -93,29 +94,22 @@ namespace SmartDoku.Main.Service
 
       if (qtdeDigitosIniciais > 0)
       {
+        List<SDCelulaModel> listaAleatoriaCelulas = new List<SDCelulaModel>();
+
+        listaAleatoriaCelulas.AddRange(matriz.Celulas);
+        listaAleatoriaCelulas.Shuffle();
+
         do
         {
-          var achou = false;
-          SDCelulaModel cel = new SDCelulaModel();
-
-          while (!achou)
-          {
-            var posLinha = new Random().Next(1, 10);
-            var posCol = new Random().Next(1, 10);
-
-            achou = matriz.Celulas.Exists(celula => celula.PosicaoLinha == posLinha
-                                                 && celula.PosicaoColuna == posCol
-                                                 && (celula.Valor == null || celula.Valor == 0));
-            if (achou)
-              cel = matriz.Celulas.Find(celula => celula.PosicaoLinha == posLinha
-                                               && celula.PosicaoColuna == posCol);
-          }
-
+          SDCelulaModel cel = listaAleatoriaCelulas.Where(celula => celula.Valor == 0 || celula.Valor == null).First();
+          
           do
           {
             cel.Valor = new Random().Next(1, 10);
 
           } while (RetornaListaCelulasInvalidas(matriz, cel).Any());
+
+          matriz.Celulas.Where(celula => celula.Equals(cel)).Select(celula => celula.Valor = cel.Valor);
 
           digGerados++;
 
@@ -127,6 +121,32 @@ namespace SmartDoku.Main.Service
     private void LimpaValoresCelulas(SDMatrizModel matriz)
     {
       matriz.Celulas.ForEach(celula => celula.Valor = null);
+    }
+  }
+
+  public static class ThreadSafeRandom
+  {
+    [ThreadStatic] private static Random Local;
+
+    public static Random ThisThreadsRandom
+    {
+      get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
+    }
+  }
+
+  static class MyExtensions
+  {
+    public static void Shuffle<T>(this IList<T> list)
+    {
+      int n = list.Count;
+      while (n > 1)
+      {
+        n--;
+        int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+        T value = list[k];
+        list[k] = list[n];
+        list[n] = value;
+      }
     }
   }
 }
