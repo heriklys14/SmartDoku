@@ -10,5 +10,7 @@ namespace SmartDoku.Main.IService
     void AjustaStatusCelula(SDMatrizModel matriz, SDCelulaModel celulaAlterada);
 
     void GeraDigitosIniciais(SDMatrizModel matriz, int qtdeDigitosIniciais);
+
+    void ResolveSudoku(SDMatrizModel matriz);
   }
 }

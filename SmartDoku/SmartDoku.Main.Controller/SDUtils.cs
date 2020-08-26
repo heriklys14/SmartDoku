@@ -31,6 +31,14 @@ namespace SmartDoku.Main.Controller
       }
     }
 
+    public void ResolveSudoku(SDMatrizModel matriz)
+    {
+      using (ISDService sdService = new SDService())
+      {
+        sdService.ResolveSudoku(matriz);
+      }
+    }
+
     public static int? ConvertStringToInt32Nullable(object objeto)
     {
       string value = Convert.ToString(objeto);

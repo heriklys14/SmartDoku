@@ -15,6 +15,7 @@ namespace SmartDoku.Main.Model
       this.PosicaoColuna = celula.PosicaoColuna;
       this.Valor = celula.Valor;
       this.isCelulaValida = celula.isCelulaValida;
+      this.isCelulaDica = celula.isCelulaDica;
     }
 
     public int PosicaoLinha { get; set; }
@@ -32,6 +33,8 @@ namespace SmartDoku.Main.Model
     private int? _valor;
 
     public bool isCelulaValida { get; set; } = true;
+
+    public bool isCelulaDica { get; set; } = false;
 
     public override bool Equals(object obj)
     {
