@@ -56,7 +56,7 @@ namespace SmartDoku
       this.tbDigitsIniciais.Name = "tbDigitsIniciais";
       this.tbDigitsIniciais.Size = new System.Drawing.Size(32, 20);
       this.tbDigitsIniciais.TabIndex = 3;
-      this.tbDigitsIniciais.Text = "17";
+      this.tbDigitsIniciais.Text = "28";
       // 
       // lbDigitsIniciais
       // 

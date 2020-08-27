@@ -35,6 +35,7 @@ namespace SmartDoku.Components
       this.AllowUserToResizeColumns = false;
       this.AllowUserToResizeRows= false;
       this.ScrollBars = ScrollBars.None;
+      this.Font = new Font(this.Font.FontFamily, 14);
       this.EditingControlShowing = new DataGridViewEditingControlShowingEventHandler(SDMatrixGrid_EditingControlShowing);
       this.CellBeginEdit = new DataGridViewCellCancelEventHandler(SDMatrixGrid_CellBeginEdit);
       this.CellValueChanged = new DataGridViewCellEventHandler(SDMatrixGrid_CellValueChanged);
@@ -199,6 +200,11 @@ namespace SmartDoku.Components
             this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.BackColor = Color.FromArgb(255, 160, 122);
             this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.SelectionBackColor = Color.FromArgb(255, 160, 122);
           }
+
+          if (celula.isCelulaDica)
+            this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.Font = new Font(this.Font, FontStyle.Bold);
+          else
+            this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.Font = new Font(this.Font, FontStyle.Regular);
 
           this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.ForeColor = Color.FromArgb(0, 0, 0);
           this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.SelectionForeColor = Color.FromArgb(0, 0, 0);

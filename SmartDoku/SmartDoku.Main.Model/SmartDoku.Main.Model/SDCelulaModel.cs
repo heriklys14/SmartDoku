@@ -6,7 +6,7 @@ namespace SmartDoku.Main.Model
   {
     public SDCelulaModel()
     {
-
+      PossiveisValores = new List<int?>();
     }
 
     public SDCelulaModel(SDCelulaModel celula)
@@ -16,6 +16,7 @@ namespace SmartDoku.Main.Model
       this.Valor = celula.Valor;
       this.isCelulaValida = celula.isCelulaValida;
       this.isCelulaDica = celula.isCelulaDica;
+      this.PossiveisValores = celula.PossiveisValores;
     }
 
     public int PosicaoLinha { get; set; }
@@ -35,6 +36,8 @@ namespace SmartDoku.Main.Model
     public bool isCelulaValida { get; set; } = true;
 
     public bool isCelulaDica { get; set; } = false;
+
+    public List<int?> PossiveisValores { get; set; }
 
     public override bool Equals(object obj)
     {

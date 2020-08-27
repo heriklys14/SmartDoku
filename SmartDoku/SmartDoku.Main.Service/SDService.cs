@@ -10,6 +10,7 @@ namespace SmartDoku.Main.Service
   public class SDService : ISDService
   {
     Random rng = new Random();
+    readonly List<int?> ListaValoresSudoku = new List<int?>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
     public void Dispose()
     {
@@ -98,7 +99,11 @@ namespace SmartDoku.Main.Service
       {
         List<SDCelulaModel> listaAleatoriaCelulas = new List<SDCelulaModel>();
 
-        listaAleatoriaCelulas.AddRange(matriz.Celulas);
+        matriz.Celulas.ForEach(celula =>
+        {
+          listaAleatoriaCelulas.Add(new SDCelulaModel(celula));
+        });
+        
         listaAleatoriaCelulas.Shuffle();
 
         do
@@ -111,12 +116,14 @@ namespace SmartDoku.Main.Service
 
           } while (RetornaListaCelulasInvalidas(matriz, cel).Any());
 
-          matriz.Celulas.Where(celula => celula.Equals(cel)).Select(celula => celula.Valor = cel.Valor);
-          matriz.Celulas.Where(celula => celula.Equals(cel)).Select(celula => celula.isCelulaDica = true);
+          matriz.Celulas.Where(celula => celula.Equals(cel)).First().Valor = cel.Valor;
+          matriz.Celulas.Where(celula => celula.Equals(cel)).First().isCelulaDica = true;
 
           digGerados++;
 
         } while (digGerados < qtdeDigitosIniciais);
+
+        PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
       }
     }
 
@@ -131,54 +138,124 @@ namespace SmartDoku.Main.Service
       {
         List<SDCelulaModel> listaAleatoriaCelulas = new List<SDCelulaModel>();
 
-        listaAleatoriaCelulas.AddRange(matriz.Celulas);
-        listaAleatoriaCelulas.Shuffle();
-
-        while (matriz.Celulas.Where(celula => celula.Valor == 0 || celula.Valor == null).Any())
+        matriz.Celulas.ForEach(celula =>
         {
-          SDCelulaModel cel = listaAleatoriaCelulas.Where(celula => celula.Valor == 0 || celula.Valor == null).First();
+          if(!celula.isCelulaDica)
+            listaAleatoriaCelulas.Add(new SDCelulaModel(celula));
+        });
+        
 
+        listaAleatoriaCelulas = listaAleatoriaCelulas.OrderBy(celula => celula.PossiveisValores.Count).ToList();
+
+        foreach (var cel in listaAleatoriaCelulas)
+        {
           GetNovaCelulaValida(matriz, cel);
         }
+
       }
+    }
+
+    private void PreenchePossiveisValores(SDMatrizModel matriz, List<SDCelulaModel> listaAleatoriaCelulas)
+    {
+      foreach (var celula in listaAleatoriaCelulas)
+      {
+        var listaValoresBloqueados = RetornaListaValoresBloqueados(matriz, celula);
+
+        if (listaValoresBloqueados.Any())
+          celula.PossiveisValores = ListaValoresSudoku
+                                      .Where(valor => !listaValoresBloqueados.Contains(valor))
+                                      .ToList();
+        else
+          celula.PossiveisValores = ListaValoresSudoku;
+      }
+    }
+
+    private List<int?> RetornaListaValoresBloqueados(SDMatrizModel matriz, SDCelulaModel celulaVerificada)
+    {
+      List<int?> listaValoresBloqueados = new List<int?>();
+
+      matriz
+        .Linhas
+          .Find(linha => linha.NumeroSequencial == celulaVerificada.PosicaoLinha)
+            .Celulas
+              .Where(celula => celula.PosicaoColuna != celulaVerificada.PosicaoColuna
+                            && celula.Valor > 0 && celula.Valor != null)
+              .ToList()
+                .ForEach(celulaDaLinha =>
+                {
+                  if(!listaValoresBloqueados.Contains(celulaDaLinha.Valor))
+                    listaValoresBloqueados.Add(celulaDaLinha.Valor);
+                });
+
+      matriz
+        .Colunas
+          .Find(coluna => coluna.NumeroSequencial == celulaVerificada.PosicaoColuna)
+            .Celulas
+              .Where(celula => celula.PosicaoLinha != celulaVerificada.PosicaoLinha
+                            && celula.Valor > 0 && celula.Valor != null)
+              .ToList()
+                .ForEach(celulaDaColuna =>
+                {
+                  if (!listaValoresBloqueados.Contains(celulaDaColuna.Valor))
+                    listaValoresBloqueados.Add(celulaDaColuna.Valor);
+                });
+
+      matriz
+        .Quadrantes
+          .Find(quadrante => quadrante.Celulas.Contains(celulaVerificada))
+            .Celulas
+              .Where(celula => !celula.Equals(celulaVerificada)
+                            && celula.Valor > 0 && celula.Valor != null)
+              .ToList()
+                .ForEach(celulaDoQuadrante =>
+                {
+                  if (!listaValoresBloqueados.Contains(celulaDoQuadrante.Valor))
+                    listaValoresBloqueados.Add(celulaDoQuadrante.Valor);
+                });
+
+      return listaValoresBloqueados;
     }
 
     private void GetNovaCelulaValida(SDMatrizModel matriz, SDCelulaModel novaCelula)
     {
-      //adicionar regra para não gerar novo valor em celulas dicas e alterar o valor da célula que disparou o método 
-      // cuja lista de celulas inválidas contém uma celula dica
-      if(!novaCelula.isCelulaDica)
-        novaCelula.Valor = GetValorAleatorioDiferente(novaCelula);
-
-      var listaCelulasInvalidas = RetornaListaCelulasInvalidas(matriz, novaCelula);
-
-      foreach (var celulaInvalida in listaCelulasInvalidas)
+      if (!novaCelula.isCelulaDica)
       {
-        GetNovaCelulaValida(matriz, celulaInvalida);
-      }
-
-      matriz.Celulas.Where(celula => celula.Equals(novaCelula)).Select(celula => celula.Valor = novaCelula.Valor);
-
-      Console.WriteLine(matriz.Celulas.Where(celula => celula.Valor != 0 && celula.Valor != null).ToList().Count);
-    }
-
-    private int GetValorAleatorioDiferente(SDCelulaModel celula)
-    {
-      if (celula.Valor == 0 || celula.Valor == null)
-      {
-        return rng.Next(1, 10);
-      }
-      else
-      {
-        int novoValor = rng.Next(1, 10);
-
-        while (novoValor == celula.Valor)
+        if(novaCelula.PossiveisValores.Count == 1)
         {
-          novoValor = rng.Next(1, 10);
+          matriz.Celulas.Where(celula => celula.Equals(novaCelula)).First().Valor = novaCelula.PossiveisValores.First();
+          PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
+          AjustaStatusCelula(matriz, novaCelula);
+        }
+        else
+        {
+          novaCelula.Valor = novaCelula.PossiveisValores.ShuffleReturn().Where(valor => valor != novaCelula.Valor).First();
+
+          var listaCelulasInvalidas = RetornaListaCelulasInvalidas(matriz, novaCelula);
+
+          foreach (var celulaInvalida in listaCelulasInvalidas)
+          {
+            GetNovaCelulaValida(matriz, celulaInvalida);
+          }
+
+          matriz.Celulas.Where(celula => celula.Equals(novaCelula)).First().Valor = novaCelula.Valor;
+          PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
+          AjustaStatusCelula(matriz, novaCelula);
         }
 
-        return novoValor;
+        Console.WriteLine(matriz.Celulas.Where(celula => celula.Valor != 0 && celula.Valor != null).ToList().Count);
       }
+      else
+        return;
+    }
+
+    private int GetValorAleatorioDiferente(int? valorAtual)
+    {
+      return rng.Next(1, 10);
+    }
+
+    private int? GetValorAleatorioDiferente(List<int?> listaValoresDisponiveis)
+    {
+      return listaValoresDisponiveis.ShuffleReturn().First();
     }
   }
 
