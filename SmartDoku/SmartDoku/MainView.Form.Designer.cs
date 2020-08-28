@@ -103,6 +103,7 @@ namespace SmartDoku
       dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Red;
       dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
       this.sdMatrixGrid.DefaultCellStyle = dataGridViewCellStyle1;
+      this.sdMatrixGrid.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
       this.sdMatrixGrid.Location = new System.Drawing.Point(263, 49);
       this.sdMatrixGrid.Matriz = null;
       this.sdMatrixGrid.MultiSelect = false;

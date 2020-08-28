@@ -39,6 +39,14 @@ namespace SmartDoku.Main.Controller
       }
     }
 
+    public SDMatrizModel MontaGrid()
+    {
+      using (ISDService sdService = new SDService())
+      {
+        return sdService.MontaGridInicial();
+      }
+    }
+
     public static int? ConvertStringToInt32Nullable(object objeto)
     {
       string value = Convert.ToString(objeto);

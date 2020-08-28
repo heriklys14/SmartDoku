@@ -12,5 +12,7 @@ namespace SmartDoku.Main.IService
     void GeraDigitosIniciais(SDMatrizModel matriz, int qtdeDigitosIniciais);
 
     void ResolveSudoku(SDMatrizModel matriz);
+
+    SDMatrizModel MontaGridInicial();
   }
 }

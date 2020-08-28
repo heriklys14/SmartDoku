@@ -9,8 +9,11 @@ namespace SmartDoku.Main.Service
 {
   public class SDService : ISDService
   {
-    Random rng = new Random();
-    readonly List<int?> ListaValoresSudoku = new List<int?>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    private Random rng = new Random();
+
+    private readonly List<int?> ListaValoresSudoku = new List<int?>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+    private bool rollBack = true;
 
     public void Dispose()
     {
@@ -37,6 +40,14 @@ namespace SmartDoku.Main.Service
       foreach (var celulaParaReavaliar in listaCelulasParaReavaliar)
       {
         AjustaStatusCelula(matriz, celulaParaReavaliar);
+      }
+    }
+
+    private void AjustaStatusCelula(SDMatrizModel matriz)
+    {
+      foreach (var celula in matriz.Celulas)
+      {
+        AjustaStatusCelula(matriz, celula);
       }
     }
 
@@ -91,8 +102,6 @@ namespace SmartDoku.Main.Service
 
     public void GeraDigitosIniciais(SDMatrizModel matriz, int qtdeDigitosIniciais)
     {
-      LimpaValoresCelulas(matriz);
-
       int digGerados = 0;
 
       if (qtdeDigitosIniciais > 0)
@@ -109,7 +118,7 @@ namespace SmartDoku.Main.Service
         do
         {
           SDCelulaModel cel = listaAleatoriaCelulas.Where(celula => celula.Valor == 0 || celula.Valor == null).First();
-          
+
           do
           {
             cel.Valor = rng.Next(1, 10);
@@ -119,45 +128,103 @@ namespace SmartDoku.Main.Service
           matriz.Celulas.Where(celula => celula.Equals(cel)).First().Valor = cel.Valor;
           matriz.Celulas.Where(celula => celula.Equals(cel)).First().isCelulaDica = true;
 
+          AjustaStatusCelula(matriz, cel);
+
           digGerados++;
 
         } while (digGerados < qtdeDigitosIniciais);
-
-        PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
       }
     }
 
-    private void LimpaValoresCelulas(SDMatrizModel matriz)
+    public SDMatrizModel MontaGridInicial()
     {
-      matriz.Celulas.ForEach(celula => celula.Valor = null);
+      SDMatrizModel matriz = RetornaGridResolvida();
+
+      return matriz;
     }
 
-    public void ResolveSudoku(SDMatrizModel matriz)
+    private SDMatrizModel RetornaGridResolvida()
     {
-      if (matriz.Celulas.Exists(celula => celula.Valor != 0 && celula.Valor != null))
+      SDMatrizModel matriz = new SDMatrizModel();
+
+      while (rollBack)
       {
-        List<SDCelulaModel> listaAleatoriaCelulas = new List<SDCelulaModel>();
+        matriz = new SDMatrizModel();
 
-        matriz.Celulas.ForEach(celula =>
+        List<SDCelulaModel> listaAleatoriaCelulas = RetornaListaAleatoriaCelulas(matriz);
+
+        GeraPrimeirosNoveDigitos(matriz, listaAleatoriaCelulas);
+
+        PreenchePossiveisValores(matriz);
+
+        Dictionary<int, SDCelulaModel> dictCelulasParaPreencher = RetornaDictCelulasParaPreencher(matriz);
+
+        try
         {
-          if(!celula.isCelulaDica)
-            listaAleatoriaCelulas.Add(new SDCelulaModel(celula));
-        });
-        
-
-        listaAleatoriaCelulas = listaAleatoriaCelulas.OrderBy(celula => celula.PossiveisValores.Count).ToList();
-
-        foreach (var cel in listaAleatoriaCelulas)
+          foreach (var item in dictCelulasParaPreencher)
+            PreencheValorCelula(matriz, item, dictCelulasParaPreencher);
+        }
+        catch (ArgumentOutOfRangeException ex)
         {
-          GetNovaCelulaValida(matriz, cel);
+          continue;
         }
 
+        AjustaStatusCelula(matriz);
+
+        if (matriz.Celulas.Any() && !matriz.Celulas.Exists(celula => !celula.isCelulaValida))
+          rollBack = false;
+      }
+
+      return matriz;
+    }
+
+    private List<SDCelulaModel> RetornaListaAleatoriaCelulas(SDMatrizModel matriz)
+    {
+      List<SDCelulaModel> listaAleatoriaCelulas = new List<SDCelulaModel>();
+
+      matriz.Celulas.ForEach(celula =>
+      {
+        listaAleatoriaCelulas.Add(new SDCelulaModel(celula));
+      });
+
+      listaAleatoriaCelulas.Shuffle();
+      return listaAleatoriaCelulas;
+    }
+
+    private void GeraPrimeirosNoveDigitos(SDMatrizModel matriz, List<SDCelulaModel> listaAleatoriaCelulas)
+    {
+      for (int i = 1; i <= 9; i++)
+      {
+        SDCelulaModel cel = listaAleatoriaCelulas.Where(celula => celula.Valor == 0 || celula.Valor == null).First();
+        cel.Valor = i;
+
+        matriz.Celulas.Where(celula => celula.Equals(cel)).First().Valor = cel.Valor;
+        matriz.Celulas.Where(celula => celula.Equals(cel)).First().isCelulaInicial = true;
+        matriz.Celulas.Where(celula => celula.Equals(cel)).First().PossiveisValores.Add(cel.Valor);
       }
     }
 
-    private void PreenchePossiveisValores(SDMatrizModel matriz, List<SDCelulaModel> listaAleatoriaCelulas)
+    private void PreenchePossiveisValores(SDMatrizModel matriz)
     {
-      foreach (var celula in listaAleatoriaCelulas)
+      foreach (var celula in matriz.Celulas)
+      {
+        if (celula.isCelulaInicial)
+          continue;
+
+        var listaValoresBloqueados = RetornaListaValoresBloqueados(matriz, celula);
+
+        if (listaValoresBloqueados.Any())
+          celula.PossiveisValores = ListaValoresSudoku
+                                      .Where(valor => !listaValoresBloqueados.Contains(valor))
+                                      .ToList();
+        else
+          celula.PossiveisValores = ListaValoresSudoku;
+      }
+    }
+
+    private void PreenchePossiveisValores(SDMatrizModel matriz, List<SDCelulaModel> listaCelulas)
+    {
+      foreach (var celula in listaCelulas)
       {
         var listaValoresBloqueados = RetornaListaValoresBloqueados(matriz, celula);
 
@@ -169,6 +236,65 @@ namespace SmartDoku.Main.Service
           celula.PossiveisValores = ListaValoresSudoku;
       }
     }
+
+    private Dictionary<int, SDCelulaModel> RetornaDictCelulasParaPreencher(SDMatrizModel matriz)
+    {
+      var dictCelulasParaPreencher = new Dictionary<int, SDCelulaModel>();
+
+      int i = 1;
+
+      matriz.Celulas.Where(celula => !celula.isCelulaInicial).OrderBy(celula => celula.PossiveisValores.Count).ToList()
+        .ForEach(celula =>
+        {
+          dictCelulasParaPreencher.Add(i, new SDCelulaModel(celula));
+          i++;
+        });
+
+      return dictCelulasParaPreencher;
+    }
+
+    private void PreencheValorCelula(SDMatrizModel matriz, KeyValuePair<int, SDCelulaModel> parCelulaAtual, Dictionary<int, SDCelulaModel> dictCelulasParaPreencher)
+    {
+      if (!matriz.Celulas.Any())
+        return;
+
+      var celulaReal = matriz.Celulas.Find(cel => cel.Equals(parCelulaAtual.Value));
+
+      if (celulaReal.PossiveisValores.Count == 1 && !matriz.Celulas.Exists(celula => !celula.PossiveisValores.Any()))
+      {
+        celulaReal.Valor = celulaReal.PossiveisValores.First();
+        return;
+      }
+
+      foreach (var valor in celulaReal.PossiveisValores)
+      {
+        if (celulaReal.Valor == valor)
+          continue;
+
+        celulaReal.Valor = valor;
+        PreenchePossiveisValores(matriz);
+
+        if (!matriz.Celulas.Exists(celula => !celula.PossiveisValores.Any()))
+          return;
+      }
+
+      if (parCelulaAtual.Key - 2 < 0)
+        throw new ArgumentOutOfRangeException();
+
+      var parCelulaAnterior = dictCelulasParaPreencher.ElementAt(parCelulaAtual.Key - 2);
+      PreencheValorCelula(matriz, parCelulaAnterior, dictCelulasParaPreencher);
+
+      PreencheValorCelula(matriz, parCelulaAtual, dictCelulasParaPreencher);
+    }
+
+    public void ResolveSudoku(SDMatrizModel matriz)
+    {
+
+    }
+
+
+
+
 
     private List<int?> RetornaListaValoresBloqueados(SDMatrizModel matriz, SDCelulaModel celulaVerificada)
     {
@@ -214,38 +340,6 @@ namespace SmartDoku.Main.Service
                 });
 
       return listaValoresBloqueados;
-    }
-
-    private void GetNovaCelulaValida(SDMatrizModel matriz, SDCelulaModel novaCelula)
-    {
-      if (!novaCelula.isCelulaDica)
-      {
-        if(novaCelula.PossiveisValores.Count == 1)
-        {
-          matriz.Celulas.Where(celula => celula.Equals(novaCelula)).First().Valor = novaCelula.PossiveisValores.First();
-          PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
-          AjustaStatusCelula(matriz, novaCelula);
-        }
-        else
-        {
-          novaCelula.Valor = novaCelula.PossiveisValores.ShuffleReturn().Where(valor => valor != novaCelula.Valor).First();
-
-          var listaCelulasInvalidas = RetornaListaCelulasInvalidas(matriz, novaCelula);
-
-          foreach (var celulaInvalida in listaCelulasInvalidas)
-          {
-            GetNovaCelulaValida(matriz, celulaInvalida);
-          }
-
-          matriz.Celulas.Where(celula => celula.Equals(novaCelula)).First().Valor = novaCelula.Valor;
-          PreenchePossiveisValores(matriz, matriz.Celulas.Where(celula => !celula.isCelulaDica).ToList());
-          AjustaStatusCelula(matriz, novaCelula);
-        }
-
-        Console.WriteLine(matriz.Celulas.Where(celula => celula.Valor != 0 && celula.Valor != null).ToList().Count);
-      }
-      else
-        return;
     }
 
     private int GetValorAleatorioDiferente(int? valorAtual)

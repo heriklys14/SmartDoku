@@ -16,6 +16,7 @@ namespace SmartDoku.Main.Model
       this.Valor = celula.Valor;
       this.isCelulaValida = celula.isCelulaValida;
       this.isCelulaDica = celula.isCelulaDica;
+      this.isCelulaInicial= celula.isCelulaInicial;
       this.PossiveisValores = celula.PossiveisValores;
     }
 
@@ -36,6 +37,8 @@ namespace SmartDoku.Main.Model
     public bool isCelulaValida { get; set; } = true;
 
     public bool isCelulaDica { get; set; } = false;
+
+    public bool isCelulaInicial { get; set; } = false;
 
     public List<int?> PossiveisValores { get; set; }
 

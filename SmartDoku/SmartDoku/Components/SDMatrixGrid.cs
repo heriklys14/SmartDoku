@@ -201,7 +201,7 @@ namespace SmartDoku.Components
             this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.SelectionBackColor = Color.FromArgb(255, 160, 122);
           }
 
-          if (celula.isCelulaDica)
+          if (celula.isCelulaDica || celula.isCelulaInicial)
             this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.Font = new Font(this.Font, FontStyle.Bold);
           else
             this.Rows[celula.PosicaoLinha - 1].Cells[celula.PosicaoColuna - 1].Style.Font = new Font(this.Font, FontStyle.Regular);

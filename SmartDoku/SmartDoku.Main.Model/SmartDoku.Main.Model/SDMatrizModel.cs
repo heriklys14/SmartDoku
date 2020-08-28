@@ -18,6 +18,14 @@ namespace SmartDoku.Main.Model
       IniciaMatriz();
     }
 
+    public SDMatrizModel(SDMatrizModel matriz)
+    {
+      Linhas = matriz.Linhas;
+      Colunas = matriz.Colunas;
+      Celulas = matriz.Celulas;
+      Quadrantes = matriz.Quadrantes;
+    }
+
     public void IniciaMatriz()
     {
       CriaLinhasMatriz();
